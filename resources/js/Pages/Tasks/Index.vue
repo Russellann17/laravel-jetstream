@@ -32,7 +32,7 @@
                                 <SecondaryButton @click="editTask(task.id)">
                                     Edit
                                 </SecondaryButton>
-                                <DangerButton @click="showDeleteDialog">
+                                <DangerButton @click="showDeleteDialog(task.id)">
                                     Delete
                                 </DangerButton>
                             </div>
@@ -48,6 +48,19 @@
     <DialogModal :show="show_delete_dialog" @close="show_delete_dialog = false">
             <template #title>
                 <h1>Delete Task</h1>
+            </template>
+            <template #content>
+                {{ 'Are your sure you want to delete the task?' }}
+            </template>
+            <template #footer>
+                <div class="flex gap-2">
+                <SecondaryButton class="float-right " @click="show_delete_dialog= false">
+                Cancel
+            </SecondaryButton>
+            <DangerButton class="float-right" @click="deleteTask">
+                Delete
+            </DangerButton>
+        </div>
             </template>
     </DialogModal>
 </AppLayout>
@@ -75,7 +88,8 @@ export default{
     },
     data:function(){
         return{
-            show_delete_dialog: false
+            show_delete_dialog: false,
+            selected_id: null
         }
     },
     methods:{
@@ -85,8 +99,16 @@ export default{
         editTask(id){
             this.$inertia.visit(route('tasks.edit', id), { method: 'get' })
         },
-        showDeleteDialog(){
+        showDeleteDialog(id){
             this.show_delete_dialog = true;
+            this.selected_id = id;
+        },
+        deleteTask(){
+            this.$inertia.delete(route('tasks.destroy', this.selected_id), {
+                onSuccess: () => {
+                    this.show_delete_dialog = false;
+            }
+        });
         }
     }
 }

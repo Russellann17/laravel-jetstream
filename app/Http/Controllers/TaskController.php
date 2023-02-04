@@ -41,11 +41,10 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        // $request->validate({
-        //     'description'=>
-        //     'status'=>
-        //     'assignee'=>
-        // })
+        $validation = $request->validate([
+            'description'=> 'required'
+        ]);
+        
         $task= new Task();
         $task->description = $request->description;
         $task->status = $request->status == 'Active' ? 1 : 0; //shorten if statement
@@ -92,6 +91,10 @@ class TaskController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validation = $request->validate([
+            'description'=> 'required'
+        ]);
+
         $task = Task::find($id);
         $task->description = $request->description;
         $task->status = $request->status == 'Active' ? 1 : 0; //shorten if statement
@@ -110,6 +113,9 @@ class TaskController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $task = Task::find($id);
+        $task->delete();
+
+        return back();
     }
 }
