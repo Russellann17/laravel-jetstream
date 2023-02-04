@@ -76,7 +76,11 @@ class TaskController extends Controller
      */
     public function edit($id)
     {
-        //
+        $task = Task::find($id);
+
+        return Inertia::render('Tasks/Edit', [
+            'task' => $task
+        ]);
     }
 
     /**
@@ -88,7 +92,14 @@ class TaskController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $task = Task::find($id);
+        $task->description = $request->description;
+        $task->status = $request->status == 'Active' ? 1 : 0; //shorten if statement
+        $task->assignee = $request->assignee;
+        $task-> save();
+
+        request()->session()->flash('flash.banner', 'Successfully Saved Task');
+        return Inertia::Location(route('tasks.index'));
     }
 
     /**
